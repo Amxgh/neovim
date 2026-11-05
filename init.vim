@@ -4,54 +4,12 @@ let g:loaded_netrw = 1
 let g:loaded_netrwPlugin = 1
 
 " ============================================================
-" VUNDLE PLUGIN MANAGER
+" PLUGINS
 " ============================================================
 
-" Vundle must load before Lua modules configure plugins.
-if has('win32')
-    set shellslash
-    let s:bundle_dir = stdpath('data') . '/bundle'
-else
-    let s:bundle_dir = expand('~/.vim/bundle')
-endif
-
-execute 'set runtimepath+=' . fnameescape(s:bundle_dir . '/Vundle.vim')
-call vundle#begin(s:bundle_dir)
-
-" Plugin manager
-Plugin 'VundleVim/Vundle.vim'
-
-" Productivity
-Plugin 'wakatime/vim-wakatime'
-Plugin 'tpope/vim-fugitive'
-Plugin 'kylechui/nvim-surround'
-
-" Appearance
-Plugin 'folke/tokyonight.nvim'
-Plugin 'karb94/neoscroll.nvim'
-Plugin 'sphamba/smear-cursor.nvim'
-
-" File explorer
-Plugin 'nvim-tree/nvim-tree.lua'
-Plugin 'nvim-tree/nvim-web-devicons'
-
-" Syntax highlighting
-Plugin 'nvim-treesitter/nvim-treesitter', {'branch': 'main'}
-Plugin 'OXY2DEV/markview.nvim'
-
-" Language servers and linting
-Plugin 'neovim/nvim-lspconfig'
-Plugin 'mason-org/mason.nvim'
-Plugin 'mfussenegger/nvim-lint'
-
-" Autocompletion
-Plugin 'windwp/nvim-autopairs'
-Plugin 'hrsh7th/nvim-cmp'
-Plugin 'hrsh7th/cmp-nvim-lsp'
-Plugin 'hrsh7th/cmp-cmdline'
-Plugin 'hrsh7th/cmp-path'
-
-call vundle#end()
+" lazy.nvim installs itself and the plugins on first start
+" (lua/config/plugins.lua). Plugins must load before Lua modules configure them.
+lua require('config.plugins')
 
 " ============================================================
 " FILETYPE AND SYNTAX HIGHLIGHTING
