@@ -211,6 +211,15 @@ return function()
     -- PDF AS TEXT
     -- ========================================================
 
+    -- PDFs store ff, fi, fl, ffi, ffl and st as single "ligature" characters
+    -- (U+FB00 to U+FB06), which a terminal squeezes into one cell. Spelt out,
+    -- they read normally and searching for "modified" finds them.
+    local ligatures = {
+        ['\u{FB00}'] = 'ff', ['\u{FB01}'] = 'fi', ['\u{FB02}'] = 'fl',
+        ['\u{FB03}'] = 'ffi', ['\u{FB04}'] = 'ffl',
+        ['\u{FB05}'] = 'st', ['\u{FB06}'] = 'st',
+    }
+
     -- Open PDFs as read-only text (needs pdftotext from poppler)
     if vim.fn.executable('pdftotext') == 1 then
         vim.api.nvim_create_autocmd('BufReadCmd', {
@@ -218,6 +227,10 @@ return function()
             pattern = '*.pdf',
             callback = function(ev)
                 local text = vim.fn.systemlist({ 'pdftotext', '-layout', ev.match, '-' })
+                for i, line in ipairs(text) do
+                    -- The UTF-8 bytes of U+FB00 to U+FB06
+                    text[i] = line:gsub('\239\172[\128-\134]', ligatures)
+                end
                 vim.bo[ev.buf].buftype = 'nofile' -- :w can never write text over the PDF
                 vim.bo[ev.buf].modifiable = true
                 vim.api.nvim_buf_set_lines(ev.buf, 0, -1, false, text)
