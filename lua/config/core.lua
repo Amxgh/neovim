@@ -14,6 +14,8 @@ return function()
             'clangd',              -- C and C++ (cpp.lua)
             'jdtls',               -- Java (java.lua)
             'lua-language-server', -- Lua (lua.lua)
+            'basedpyright',        -- Python types and completion (python.lua)
+            'ruff',                -- Python linting and formatting (python.lua)
             'tree-sitter-cli',     -- builds Tree-sitter parsers (below)
             -- Kept at the version this config was set up with: a newer major
             -- version can reject a project's existing checkstyle.xml
