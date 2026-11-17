@@ -112,13 +112,24 @@ return function()
     cmp.event:on('confirm_done',
         require('nvim-autopairs.completion.cmp').on_confirm_done())
 
+    -- Completing a shell command name scans every directory on the slow WSL
+    -- PATH and freezes Neovim. This copy of the cmdline source stays quiet
+    -- wherever Neovim would complete one: after the ! in :!cmd, :r !cmd,
+    -- :w !cmd and :'<,'>!cmd, and after :terminal. Arguments typed after the
+    -- command still complete as file names.
+    local cmdline_source = require('cmp_cmdline').new()
+    function cmdline_source:is_available()
+        local before_cursor = vim.fn.getcmdline():sub(1, vim.fn.getcmdpos() - 1)
+        return vim.fn.getcompletiontype(before_cursor) ~= 'shellcmd'
+    end
+    cmp.register_source('cmdline_no_shell', cmdline_source)
+
     cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
             { name = 'path' },
         }, {
-            -- '!' skips shell-command completion, which scans the slow WSL PATH
-            { name = 'cmdline', option = { ignore_cmds = { 'Man', '!' } } },
+            { name = 'cmdline_no_shell', option = { ignore_cmds = { 'Man' } } },
         }),
         matching = { disallow_symbol_nonprefix_matching = false },
     })
